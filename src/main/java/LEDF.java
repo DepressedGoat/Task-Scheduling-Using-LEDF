@@ -33,14 +33,7 @@ public class LEDF {
             }
 
             if (ready.isEmpty()) {
-                // jump to next arrival
-                final double time = tc;
-                OptionalDouble nextArr = T.stream()
-                        .filter(t -> !t.completed && t.arrival > time)
-                        .mapToDouble(t -> t.arrival).min();
-                if (nextArr.isEmpty()) break; // all done
-                tc = nextArr.getAsDouble();
-                continue;
+                break;
             }
 
             ready.sort(Comparator.comparingDouble(task -> task.deadline));
@@ -62,7 +55,6 @@ public class LEDF {
             double energy = Math.pow(selected.voltage, 2) * miDone;
             totalEnergy += energy;
 
-            //printResults(tc, next, active, selected);
             System.out.printf("t=%.2f–%.2f: run %s at %d MIPS (V=%.1f)%n", tc, next, active.name, selected.mips, selected.voltage);
 
             tc = next;
@@ -78,10 +70,6 @@ public class LEDF {
         double miLeft = 0;
         double minMips = 0;
         for (Task t : ready) {
-                /*
-                if (!((t.remaining / S.getFirst().mips) < t.deadline - active.deadline)) {
-                    minMips += t.remaining / (t.deadline - tc);
-                }*/
             miLeft += t.remaining;
 
             double neededMips = miLeft / (t.deadline - tc);
@@ -99,9 +87,11 @@ public class LEDF {
         return selected;
     }
 
+    //Not yet implemented
+    /*
     private void printResults(double tc, double next, Task active, CPUSpeed selected) {
         double tmp;
 
         System.out.printf("t=%.2f–%.2f: run %s at %d MIPS (V=%.1f)%n", tc, next, active.name, selected.mips, selected.voltage);
-    }
+    }*/
 }
